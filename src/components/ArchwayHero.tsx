@@ -69,13 +69,21 @@ export function ArchwayHero({
           </p>
         )}
         {invocation && <span className="mt-6 block h-px w-24 bg-gold/50" />}
-        <h1 className="mt-8 font-display text-5xl leading-[0.95] text-ivory sm:text-7xl lg:text-8xl">
+        <h1 className="mt-8 max-w-full break-words font-display text-[clamp(2rem,10vw,6rem)] leading-[1.1] text-ivory">
           {name1 && <span className="block">{name1}</span>}
-          {name1 && name2 && <span className="my-3 block font-display text-2xl italic text-gold-foil sm:text-3xl">&amp;</span>}
+          {name1 && name2 && (
+            <span className="my-3 block font-display text-2xl italic text-gold-foil sm:text-3xl">
+              &amp;
+            </span>
+          )}
           {name2 && <span className="block">{name2}</span>}
         </h1>
         {(name1 || name2) && venue && <span className="mt-8 block h-px w-24 bg-gold/50" />}
-        {venue && <p className="mt-6 max-w-xs text-[0.55rem] leading-relaxed tracking-royal text-ivory/70 uppercase sm:text-[0.62rem]">{venue}</p>}
+        {venue && (
+          <p className="mt-6 max-w-xs text-[0.55rem] leading-relaxed tracking-royal text-ivory/70 uppercase sm:text-[0.62rem]">
+            {venue}
+          </p>
+        )}
       </div>
 
       {/* foreground: fast zoom past the viewer */}

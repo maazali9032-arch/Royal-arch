@@ -136,7 +136,7 @@ export function ScratchDate({ date }: { date: string }) {
           </span>
           <span className="mt-3 block h-px w-16 bg-gold/60" />
           <span className="mt-3 text-[0.55rem] tracking-royal text-ivory/70 uppercase">
-            Nikah at Dusk
+            Save the date
           </span>
         </div>
         <canvas
@@ -171,6 +171,15 @@ export function ScratchDate({ date }: { date: string }) {
           }}
         />
       </div>
+      {!revealed && (
+        <button
+          type="button"
+          onClick={() => setRevealed(true)}
+          className="mx-auto mt-4 block border-b border-gold/40 pb-1 text-xs text-gold/70"
+        >
+          Reveal date
+        </button>
+      )}
     </div>
   );
 }

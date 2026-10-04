@@ -97,9 +97,7 @@ function httpUrl(value: unknown): string | undefined {
 }
 
 function compact<T extends Record<string, unknown>>(value: T): T {
-  return Object.fromEntries(
-    Object.entries(value).filter(([, item]) => item !== undefined),
-  ) as T;
+  return Object.fromEntries(Object.entries(value).filter(([, item]) => item !== undefined)) as T;
 }
 
 export function sanitizeSlug(rawSlug: string): string | undefined {
@@ -120,23 +118,25 @@ function parseContent(value: unknown): InvitationContent | undefined {
     ? eventInput.flatMap((item) => {
         const event = record(item);
         if (!event) return [];
-        return [compact({
-          id: text(event["id"]),
-          name: text(event["name"]),
-          title: text(event["title"]),
-          event_name: text(event["event_name"]),
-          date: text(event["date"]),
-          event_date: text(event["event_date"]),
-          time: text(event["time"]),
-          start_time: text(event["start_time"]),
-          venue: text(event["venue"]),
-          venue_name: text(event["venue_name"]),
-          city: text(event["city"]),
-          maps_url: text(event["maps_url"]),
-          mapsUrl: text(event["mapsUrl"]),
-          note: text(event["note"]),
-          description: text(event["description"]),
-        })];
+        return [
+          compact({
+            id: text(event["id"]),
+            name: text(event["name"]),
+            title: text(event["title"]),
+            event_name: text(event["event_name"]),
+            date: text(event["date"]),
+            event_date: text(event["event_date"]),
+            time: text(event["time"]),
+            start_time: text(event["start_time"]),
+            venue: text(event["venue"]),
+            venue_name: text(event["venue_name"]),
+            city: text(event["city"]),
+            maps_url: httpUrl(event["maps_url"]),
+            mapsUrl: httpUrl(event["mapsUrl"]),
+            note: text(event["note"]),
+            description: text(event["description"]),
+          }),
+        ];
       })
     : undefined;
 
@@ -146,7 +146,13 @@ function parseContent(value: unknown): InvitationContent | undefined {
         const contact = record(item);
         const phone = contact ? text(contact["phone"]) : undefined;
         if (!contact || !phone) return [];
-        return [compact({ name: text(contact["name"]), phone, whatsapp_url: httpUrl(contact["whatsapp_url"]) })];
+        return [
+          compact({
+            name: text(contact["name"]),
+            phone,
+            whatsapp_url: httpUrl(contact["whatsapp_url"]),
+          }),
+        ];
       })
     : undefined;
 
@@ -161,10 +167,22 @@ function parseContent(value: unknown): InvitationContent | undefined {
         if (!image) return [];
         const url = httpUrl(image["url"]) ?? httpUrl(image["src"]) ?? httpUrl(image["image_url"]);
         if (!url) return [];
-        const width = typeof image["width"] === "number" && image["width"] > 0 ? image["width"] : undefined;
-        const height = typeof image["height"] === "number" && image["height"] > 0 ? image["height"] : undefined;
-        const span = image["span"] === "tall" || image["span"] === "wide" ? image["span"] : undefined;
-        return [compact({ url, alt: text(image["alt"]), caption: text(image["caption"]), width, height, span })];
+        const width =
+          typeof image["width"] === "number" && image["width"] > 0 ? image["width"] : undefined;
+        const height =
+          typeof image["height"] === "number" && image["height"] > 0 ? image["height"] : undefined;
+        const span =
+          image["span"] === "tall" || image["span"] === "wide" ? image["span"] : undefined;
+        return [
+          compact({
+            url,
+            alt: text(image["alt"]),
+            caption: text(image["caption"]),
+            width,
+            height,
+            span,
+          }),
+        ];
       })
     : undefined;
 
@@ -225,9 +243,15 @@ export function parseInvitationResponse(value: unknown): PublicInvitationRespons
     const invitation = record(input?.["invitation"]);
     return compact({
       state,
-      invitation: invitation ? compact({ public_url: httpUrl(invitation["public_url"]) }) : undefined,
+      invitation: invitation
+        ? compact({ public_url: httpUrl(invitation["public_url"]) })
+        : undefined,
       content: parseContent(input?.["content"]),
       detail: record(input?.["detail"]),
+      // Only the approved public name is retained in live state, never shop contacts.
+      shop: record(input?.["shop"])
+        ? compact({ name: text(record(input?.["shop"])?.["name"]) })
+        : undefined,
     }) as PublicInvitationResponse;
   }
 
