@@ -156,10 +156,36 @@ function LiveInvitation({
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-emerald-deep">
       {publicUrl && <link rel="canonical" href={publicUrl} />}
+
+      {/* Three-piece decorative frame: top/footer stay at their page positions; centre stays fixed. */}
+      <img
+        src="/decorative-frame.webp"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute left-0 top-[-20] z-50 hidden h-[650px] w-full max-[684px]:block"
+      />
+      <img
+        src="/decorative-frame-centre.webp"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 z-40 hidden h-screen w-full object-fill max-[684px]:block"
+      />
+      <img
+        src="/decorative-frame-footer.webp"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-0 left-1/2 z-50 hidden h-auto w-full -translate-x-1/2 scale-x-[1.35] max-[684px]:block"
+        // className="pointer-events-none absolute bottom-0 left-0 z-50 hidden h-auto w-full max-[684px]:block"
+      />
+
       <ParticleField />
-      <BrandRibbon name={brandName} />
-      {content.music_enabled && content.music_url && <MusicControl url={content.music_url} />}
-      <ArchwayHero
+      <div className="relative z-[70]">
+        <BrandRibbon name={brandName} />
+        {content.music_enabled && content.music_url && <MusicControl url={content.music_url} />}
+      </div>
+
+      <div className="relative z-[60]">
+        <ArchwayHero
         venue={venue}
         {...(names[0] ? { name1: names[0] } : {})}
         {...(names[1] ? { name2: names[1] } : {})}
@@ -199,17 +225,18 @@ function LiveInvitation({
         </section>
       )}
       <ContactSection contacts={contacts} />
-      {(names.length > 0 || content.wedding_date || venue) && (
-        <footer className="paper-grain relative px-5 pb-20 text-center sm:px-8">
-          <span className="mx-auto block h-px w-16 bg-gold/50" />
-          {names.length > 0 && (
-            <p className="mt-6 font-display text-2xl italic text-gold-foil">{names.join(" & ")}</p>
-          )}
-          {venue && (
-            <p className="mt-4 text-[0.5rem] tracking-royal text-ivory/50 uppercase">{venue}</p>
-          )}
-        </footer>
-      )}
+        {(names.length > 0 || content.wedding_date || venue) && (
+          <footer className="paper-grain relative px-5 pb-20 text-center sm:px-8">
+            <span className="mx-auto block h-px w-16 bg-gold/50" />
+            {names.length > 0 && (
+              <p className="mt-6 font-display text-2xl italic text-gold-foil">{names.join(" & ")}</p>
+            )}
+            {venue && (
+              <p className="mt-4 text-[0.5rem] tracking-royal text-ivory/50 uppercase">{venue}</p>
+            )}
+          </footer>
+        )}
+      </div>
     </main>
   );
 }
